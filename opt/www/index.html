@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect</title>
+    <script>
+        queryString = location.search.slice(1);
+        window.location.href = "/index.cgi?" + queryString;
+    </script>
+</head>
+<body>Redirecting</body>
+</html>

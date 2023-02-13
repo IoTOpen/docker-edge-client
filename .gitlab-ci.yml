@@ -1,0 +1,6 @@
+stages:
+    - container
+
+include:
+    - project: "util/ci-templates"
+      file: "/docker.yml"
