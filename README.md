@@ -1,4 +1,4 @@
-# IoT Open Edge App Lab
+# IoT Open Edge Client
 
 This is a Docker image that functions as a IoT Open Edge client. It was built as a way to play with Edge apps without
 Edge hardware. Please do not expect too much.
@@ -12,7 +12,7 @@ In order for this to work you need an IoT Open Lynx account and an installation 
 ### Build the image
 
 ```
-docker build -t lynx-edge-client .
+docker build -t ghcr.io/iotopen/edge-client .
 ```
 
 ### Run the image
@@ -20,7 +20,7 @@ docker build -t lynx-edge-client .
 Run the image on any unprivileged port (8088 in the example)
 
 ```
-docker run -d -p 8088:80 lynx-edge-client:latest
+docker run -d -p 8088:80 ghcr.io/iotopen/edge-client:latest
 ```
 
 ### Authentication to web gui
@@ -43,8 +43,8 @@ Then authentication is done by supplying a valid API-key from BASE as a GET para
 #### Examples:
 
 ```
-docker run -d -e INSECURE=true -p 8088:80 lynx-edge-client:latest
-docker run -d -e BASE=https://lynx.iotopen.se -p 8088:80 lynx-edge-client:latest
+docker run -d -e INSECURE=true -p 8088:80 ghcr.io/iotopen/edge-client:latest
+docker run -d -e BASE=https://lynx.iotopen.se -p 8088:80 ghcr.io/iotopen/edge-client:latest
 ```
 
 After starting the container, navigate to `http://localhost:8088/index.cgi?access-token=<insert-api-key>`
