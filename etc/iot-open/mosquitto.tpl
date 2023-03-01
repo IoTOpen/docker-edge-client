@@ -9,7 +9,7 @@ connection lynx-${client_id}
 bridge_capath /etc/ssl/certs/
 username ${mqtt_username}
 password ${mqtt_password}
-address ${broker}
+address ${mqtt_broker}
 clientid edge-${client_id}
 notification_topic ${client_id}/box/event/status
 

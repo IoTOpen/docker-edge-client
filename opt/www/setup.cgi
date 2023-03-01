@@ -31,7 +31,7 @@ if [ -n "${SERVER}" ]; then
 	"installation_id": ${IID},
 	"aam": "${SERVER}",
 	"api": "${SERVER}",
-	"broker": "${MQTT_BROKER}",
+	"mqtt_broker": "${MQTT_BROKER}",
 	"mqtt_username":"${MQTT_USER}",
 	"mqtt_password":"${PASSWORD}"
 }
