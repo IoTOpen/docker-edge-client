@@ -9,12 +9,6 @@ In order for this to work you need an IoT Open Lynx account and an installation 
 
 ## Getting started with the image
 
-### Build the image
-
-```
-docker build -t ghcr.io/iotopen/edge-client .
-```
-
 ### Run the image
 
 Run the image on any unprivileged port (8088 in the example)
@@ -95,4 +89,9 @@ the container to be able to listen and send commands to the container.
 
 Creating the Edge Apps is out of scope for this document.
 
+## Build the image
+
+```
+docker build -t ghcr.io/iotopen/edge-client .
+```
 
