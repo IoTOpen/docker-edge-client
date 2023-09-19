@@ -1,1 +1,1 @@
-deb https://pkg.iotopen.se/debian/ unstable main
+deb https://pkg.iotopen.se/apt/ bookworm main
