@@ -1,1 +1,1 @@
-deb https://pkg.iotopen.se/apt/ bookworm main
+deb [signed-by=/etc/apt/keyrings/iotopen-apt-keyring.gpg] https://pkg.iotopen.se/apt/ bookworm main
