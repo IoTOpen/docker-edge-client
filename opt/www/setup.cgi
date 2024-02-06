@@ -92,6 +92,10 @@ cat <<__END__
 
 <input class="btn btn-primary" type="submit" value="Submit" />
 <input id="paste" class="btn btn-primary" type="submit" value="Paste options from clipboard">
+<pre>
+(or press ctrl+v)
+button does not work in firefox
+</pre>
 </form>
 <script>
 let btn = document.getElementById("paste");
@@ -102,6 +106,15 @@ let brokerField = document.getElementById("broker");
 let mqttuserField = document.getElementById("mqttuser");
 let mqttpasswordField = document.getElementById("password");
 
+function fill(obj) {
+        clientIdField.value = obj.client_id;
+        installationIdField.value = obj.installation_id;
+        serverField.value = obj.api;
+        brokerField.value = obj.mqtt_broker;
+        mqttuserField.value = obj.mqtt_username;
+        mqttpasswordField.value = obj.mqtt_password;
+}
+
 btn.addEventListener('click', (e) => {
   e.preventDefault(); 
   navigator.clipboard.read()
@@ -110,15 +123,18 @@ btn.addEventListener('click', (e) => {
      }).
      then(res => {
         let obj = JSON.parse(res);
-        console.log("Object:", obj);
-        clientIdField.value = obj.client_id;
-        installationIdField.value = obj.installation_id;
-        serverField.value = obj.api;
-        brokerField.value = obj.mqtt_broker;
-        mqttuserField.value = obj.mqtt_username;
-        mqttpasswordField.value = obj.mqtt_password;
+        fill(obj);
      })
      .catch(e => {});
+});
+
+
+document.addEventListener('paste', (e) => {
+  if(e.explicitOriginalTarget.localName == "body") {
+    e.preventDefault();
+    let obj = JSON.parse(e.clipboardData.getData("text"));
+    fill(obj);
+  }
 });
 </script>
 __END__
