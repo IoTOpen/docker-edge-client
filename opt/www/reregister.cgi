@@ -12,7 +12,7 @@ echo "<pre>"
 
 echo "<b>Re-registering</b>"
 iotopen-verify
-cp /etc/iot-open/mosquitto.conf /etc/mosquitto/
+cp /etc/iot-open/mosquitto.conf /etc/mosquitto/conf.d/iotopen.conf
 /etc/init.d/mosquitto restart
 
 # TODO: Edged restart
