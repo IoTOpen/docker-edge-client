@@ -90,8 +90,34 @@ cat <<__END__
     </div>
 </div>
 
-<input class="btn btn-primary" type="submit" value="Submit">
+<input class="btn btn-primary" type="submit" value="Submit" />
+<input id="paste" class="btn btn-primary" type="submit" value="Paste options from clipboard">
 </form>
+<script>
+let btn = document.getElementById("paste");
+let clientIdField = document.getElementById("client_id");
+let installationIdField = document.getElementById("installation_id");
+let serverField = document.getElementById("server");
+let brokerField = document.getElementById("broker");
+let mqttuserField = document.getElementById("mqttuser");
+let mqttpasswordField = document.getElementById("password");
+
+btn.addEventListener('click', (e) => {
+  e.preventDefault(); 
+  navigator.clipboard.readText()
+     .then(res => {
+        let obj = JSON.parse(res);
+        console.log("Object:", obj);
+        clientIdField.value = obj.client_id;
+        installationIdField.value = obj.installation_id;
+        serverField.value = obj.api;
+        brokerField.value = obj.mqtt_broker;
+        mqttuserField.value = obj.mqtt_username;
+        mqttpasswordField.value = obj.mqtt_password;
+     })
+     .catch(e => {});
+});
+</script>
 __END__
 
 cat footer.inc
