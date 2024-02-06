@@ -104,8 +104,11 @@ let mqttpasswordField = document.getElementById("password");
 
 btn.addEventListener('click', (e) => {
   e.preventDefault(); 
-  navigator.clipboard.readText()
+  navigator.clipboard.read()
      .then(res => {
+	return res.text();
+     }).
+     then(res => {
         let obj = JSON.parse(res);
         console.log("Object:", obj);
         clientIdField.value = obj.client_id;
