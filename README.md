@@ -41,6 +41,13 @@ docker run -d -e INSECURE=true -p 8088:80 ghcr.io/iotopen/edge-client:latest
 docker run -d -e BASE=https://lynx.iotopen.se -p 8088:80 ghcr.io/iotopen/edge-client:latest
 ```
 
+For edge-app development, having the source mounted is convenient:
+
+```
+docker create --name edge-app-dev -e BASE=https://lynx.iotopen.se -p 8080:80 -v <path-to-app-source>:/src ghcr.io/iotopen/edge-client:latest
+docker start edge-app-dev
+```
+
 After starting the container, navigate to `http://localhost:8088/index.cgi?access-token=<insert-api-key>`
 
 #### Headless
