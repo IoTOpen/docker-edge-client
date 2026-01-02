@@ -16,12 +16,17 @@ services:
       # BASE: https://lynx.iotopen.se
 
     volumes:
-      # The config/iotopen.json is generate in IoT Open
+      # The config/iotopen.json is generated in IoT Open
       - ./config/iotopen.json:/etc/iot-open/iotopen.json:ro
 
       # Please observe that this opens upp mqtt to the network without
       # authentication. Use with caution.
-      - ./config/mosquitto-local.conf:/etc/mosquitto/conf.d/local.conf:ro
+      #
+      # Uncomment the line below to expose the mqtt broker to the local
+      # network
+      # - ./config/mosquitto-local.conf:/etc/mosquitto/conf.d/local.conf:ro
+    
     ports:
       - "1883:1883"
+    
     restart: unless-stopped
