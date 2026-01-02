@@ -1,0 +1,27 @@
+services:
+  edge-client:
+    image: ghcr.io/iotopen/edge-client:latest
+    container_name: iotopen-edge-client
+
+    environment:
+      # Turns the webgui completely off
+      HEADLESS: true
+
+      # When using the webgui this turns authentication off. Useful
+      # Only on secure networks
+      # INSECURE: true
+
+      # When the webgui is active and INSECURE is not set, 
+      # authentication to this instance is used.
+      # BASE: https://lynx.iotopen.se
+
+    volumes:
+      # The config/iotopen.json is generate in IoT Open
+      - ./config/iotopen.json:/etc/iot-open/iotopen.json:ro
+
+      # Please observe that this opens upp mqtt to the network without
+      # authentication. Use with caution.
+      - ./config/mosquitto-local.conf:/etc/mosquitto/conf.d/local.conf:ro
+    ports:
+      - "1883:1883"
+    restart: unless-stopped
