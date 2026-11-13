@@ -1,0 +1,54 @@
+# Development setup for the edge client.
+#
+# Runs the published edge-client image, but with:
+#   - real credentials from config/iotopen.dev.json (git-ignored)
+#   - edged and edge-app taken from a local checkout of the edged repo
+#   - the local MQTT broker and web GUI reachable from this machine only
+#
+# Usage:
+#   1. Create credentials in IoT Open:
+#        Installation -> Settings -> Edge Client -> Create new credentials
+#      and save the resulting file as config/iotopen.dev.json
+#   2. docker compose -f docker-compose.dev.yml up
+#   3. After editing edged.lua / edge-app.lua, restart the daemon:
+#        docker compose -f docker-compose.dev.yml exec edge-client supervisorctl restart edged
+#
+# EDGED_SRC can point to another edged checkout (default: ../../edged).
+
+services:
+  edge-client:
+    image: ghcr.io/iotopen/edge-client:latest
+    container_name: iotopen-edge-client-dev
+
+    environment:
+      # Web GUI without authentication; safe only because the port is
+      # bound to localhost below.
+      INSECURE: "true"
+
+    volumes:
+      # Credentials generated in IoT Open (never commit this file).
+      # Fail instead of silently creating an empty directory if missing.
+      - type: bind
+        source: ./config/iotopen.dev.json
+        target: /etc/iot-open/iotopen.json
+        read_only: true
+        bind:
+          create_host_path: false
+
+      # Local edged sources replace the packaged binaries
+      - ${EDGED_SRC:-../../edged}/edged.lua:/usr/bin/edged:ro
+      - ${EDGED_SRC:-../../edged}/edge-app.lua:/usr/bin/edge-app:ro
+
+      # Let the broker listen on all interfaces inside the container
+      # (anonymous access; the port is published to localhost only)
+      - ./config/mosquitto-local.conf:/etc/mosquitto/conf.d/local.conf:ro
+
+      # Persist downloaded apps and their configs between restarts
+      - edge-data:/var/lib/iot-open/edge
+
+    ports:
+      - "127.0.0.1:1883:1883"
+      - "127.0.0.1:8088:80"
+
+volumes:
+  edge-data:

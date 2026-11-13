@@ -1,0 +1,2 @@
+# Real edge client credentials for local development
+docker-compose/config/iotopen.dev.json
