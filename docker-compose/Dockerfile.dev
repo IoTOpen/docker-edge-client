@@ -1,9 +1,10 @@
-# Development image: the published edge client with iotopen-rt and edged
-# replaced by builds from local checkouts.
+# Development image: the published edge client with iotopen-rt, edged and
+# iotopen-verify replaced by builds from local checkouts.
 #
-# Built by docker-compose.dev.yml, which provides two named build contexts:
+# Built by docker-compose.dev.yml, which provides these named build contexts:
 #   iotopen-rt  - local iotopen-rt checkout (IOTOPEN_RT_SRC)
 #   edged       - local edged checkout (EDGED_SRC)
+#   iotopen-verify - local iotopen-verify checkout (IOTOPEN_VERIFY_SRC)
 
 ARG BASE_IMAGE=ghcr.io/iotopen/edge-client:latest
 
@@ -33,6 +34,14 @@ COPY --from=edged . /edged
 RUN cmake -S /edged -B /edged-build -DCMAKE_INSTALL_PREFIX=/usr && \
     DESTDIR=/out-edged cmake --install /edged-build
 
+# --- Install iotopen-verify through its CMake build (version for -v) -------
+FROM iotopen-rt-build AS iotopen-verify-build
+
+COPY --from=iotopen-verify . /iotopen-verify
+
+RUN cmake -S /iotopen-verify -B /iotopen-verify-build -DCMAKE_INSTALL_PREFIX=/usr && \
+    DESTDIR=/out-verify cmake --install /iotopen-verify-build
+
 # --- Runtime image ---------------------------------------------------------
 FROM ${BASE_IMAGE}
 
@@ -43,3 +52,7 @@ COPY --from=iotopen-rt-build /out/ /
 
 # Locally built edged and edge-app
 COPY --from=edged-build /out-edged/usr/bin/ /usr/bin/
+
+# Locally built iotopen-verify. Only the program: the image keeps its own
+# mosquitto.tpl from docker-edge-client.
+COPY --from=iotopen-verify-build /out-verify/usr/bin/iotopen-verify /usr/bin/iotopen-verify

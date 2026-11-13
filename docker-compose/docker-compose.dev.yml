@@ -4,6 +4,7 @@
 # with:
 #   - iotopen-rt built from a local checkout of the iotopen-rt repo
 #   - edged and edge-app taken from a local checkout of the edged repo
+#   - iotopen-verify taken from a local checkout of the iotopen-verify repo
 #   - real credentials from config/iotopen.dev.json (git-ignored)
 #   - the local MQTT broker and web GUI reachable from this machine only
 #
@@ -12,7 +13,7 @@
 #        Installation -> Settings -> Edge Client -> Create new credentials
 #      and save the resulting file as config/iotopen.dev.json
 #   2. docker compose -f docker-compose.dev.yml up --build
-#   3. After changing edged or iotopen-rt, rebuild: repeat step 2.
+#   3. After changing edged, iotopen-rt or iotopen-verify, rebuild: repeat step 2.
 #      Verify what is running with:
 #        docker compose -f docker-compose.dev.yml exec edge-client edged -v
 #      A "-dirty" suffix means the build included uncommitted changes.
@@ -26,6 +27,7 @@
 # Source locations can be overridden:
 #   IOTOPEN_RT_SRC  (default: ../../iotopen-rt)
 #   EDGED_SRC       (default: ../../edged)
+#   IOTOPEN_VERIFY_SRC (default: ../../iotopen-verify)
 
 services:
   edge-client:
@@ -35,6 +37,7 @@ services:
       additional_contexts:
         iotopen-rt: ${IOTOPEN_RT_SRC:-../../iotopen-rt}
         edged: ${EDGED_SRC:-../../edged}
+        iotopen-verify: ${IOTOPEN_VERIFY_SRC:-../../iotopen-verify}
     image: iotopen/edge-client:dev
     pull_policy: build
     container_name: iotopen-edge-client-dev
