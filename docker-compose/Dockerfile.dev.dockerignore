@@ -1,0 +1,3 @@
+# Dockerfile.dev only copies from named contexts; keep credentials
+# and everything else out of the main build context.
+*

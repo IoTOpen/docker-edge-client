@@ -1,0 +1,39 @@
+# Development image: the published edge client with iotopen-rt and edged
+# replaced by builds from local checkouts.
+#
+# Built by docker-compose.dev.yml, which provides two named build contexts:
+#   iotopen-rt  - local iotopen-rt checkout (IOTOPEN_RT_SRC)
+#   edged       - local edged checkout (EDGED_SRC)
+
+ARG BASE_IMAGE=ghcr.io/iotopen/edge-client:latest
+
+# --- Build iotopen-rt on the same Debian release as the base image ---------
+FROM debian:trixie-slim AS iotopen-rt-build
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential cmake git ca-certificates \
+        libmosquitto-dev libcap-dev libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY --from=iotopen-rt . /src
+
+# The checkout is owned by the host user; let git read it so the build
+# can embed the commit hash and tag (shown by `iotopen-rt -h`).
+RUN git config --global --add safe.directory '*' && \
+    cmake -S /src -B /build -DCMAKE_INSTALL_PREFIX=/usr && \
+    cmake --build /build -j"$(nproc)" && \
+    DESTDIR=/out cmake --install /build
+
+# --- Runtime image ---------------------------------------------------------
+FROM ${BASE_IMAGE}
+
+# Remove the packaged runtime modules so no stale files are left behind,
+# then install the locally built runtime.
+RUN rm -rf /usr/lib/iotopen
+COPY --from=iotopen-rt-build /out/ /
+
+# Locally built edged (docker-compose.dev.yml also bind-mounts these so
+# Lua edits only need a `supervisorctl restart edged`).
+COPY --chmod=755 --from=edged edged.lua /usr/bin/edged
+COPY --chmod=755 --from=edged edge-app.lua /usr/bin/edge-app

@@ -1,23 +1,42 @@
 # Development setup for the edge client.
 #
-# Runs the published edge-client image, but with:
-#   - real credentials from config/iotopen.dev.json (git-ignored)
+# Builds an image from the published edge-client image (see Dockerfile.dev),
+# with:
+#   - iotopen-rt built from a local checkout of the iotopen-rt repo
 #   - edged and edge-app taken from a local checkout of the edged repo
+#   - real credentials from config/iotopen.dev.json (git-ignored)
 #   - the local MQTT broker and web GUI reachable from this machine only
 #
 # Usage:
 #   1. Create credentials in IoT Open:
 #        Installation -> Settings -> Edge Client -> Create new credentials
 #      and save the resulting file as config/iotopen.dev.json
-#   2. docker compose -f docker-compose.dev.yml up
+#   2. docker compose -f docker-compose.dev.yml up --build
 #   3. After editing edged.lua / edge-app.lua, restart the daemon:
 #        docker compose -f docker-compose.dev.yml exec edge-client supervisorctl restart edged
+#      After changing iotopen-rt, rebuild: repeat step 2.
+#      `iotopen-rt -h` inside the container shows the build date and commit.
 #
-# EDGED_SRC can point to another edged checkout (default: ../../edged).
+# The base image must be resolvable by the active buildx builder. A
+# docker-container builder always pulls it from ghcr.io; if that fails
+# (e.g. stale ghcr.io credentials), use the local image via the default
+# builder:
+#   BUILDX_BUILDER=default docker compose -f docker-compose.dev.yml up --build
+#
+# Source locations can be overridden:
+#   IOTOPEN_RT_SRC  (default: ../../iotopen-rt)
+#   EDGED_SRC       (default: ../../edged)
 
 services:
   edge-client:
-    image: ghcr.io/iotopen/edge-client:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      additional_contexts:
+        iotopen-rt: ${IOTOPEN_RT_SRC:-../../iotopen-rt}
+        edged: ${EDGED_SRC:-../../edged}
+    image: iotopen/edge-client:dev
+    pull_policy: build
     container_name: iotopen-edge-client-dev
 
     environment:
